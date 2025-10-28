@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Instagram } from 'lucide-react';
+import Image from 'next/image';
 
 export default function CollaborationTab() {
   const handleCollabClick = () => {

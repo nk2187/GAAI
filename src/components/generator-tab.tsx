@@ -6,7 +6,27 @@ import ArtworkUploader from './artwork-uploader';
 import GeneratedContent from './generated-content';
 import { analyzeArtworkTheme, type AnalyzeArtworkThemeOutput } from '@/ai/flows/analyze-artwork-theme';
 import { generateInstagramCaption, type GenerateInstagramCaptionOutput } from '@/ai/flows/generate-instagram-caption';
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+import IdeaGenerator from './idea-generator';
+
+const captionStyles = [
+    "Short & Aesthetic ✨",
+    "Funny & Engaging 😄",
+    "Emotional or Deep 🎭",
+    "Viral Reels Style 🎥"
+];
 
 type GeneratorTabProps = {
   onGenerated: (result: GenerationResult) => void;
@@ -19,10 +39,13 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const [captionStyle, setCaptionStyle] = useState(captionStyles[0]);
+  const [showCollabPopup, setShowCollabPopup] = useState(false);
 
   const runGeneration = useCallback(async (dataUri: string) => {
     setIsLoading(true);
     setError(null);
+    setShowCollabPopup(false);
 
     try {
       let analysis = analysisResult;
@@ -37,6 +60,7 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
         artworkTheme: analysis.theme,
         artworkMood: analysis.mood,
         artworkColor: analysis.colorPalette,
+        captionStyle: captionStyle
       });
 
       setGeneratedContent(captionData);
@@ -49,8 +73,11 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
         artworkTheme: analysis.theme,
         artworkMood: analysis.mood,
         artworkColor: analysis.colorPalette,
+        captionStyle: captionStyle,
         timestamp: Date.now(),
       });
+
+      setShowCollabPopup(true);
 
     } catch (e) {
       console.error(e);
@@ -64,7 +91,7 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [analysisResult, onGenerated, toast]);
+  }, [analysisResult, onGenerated, toast, captionStyle]);
 
   const handleImageUpload = async (file: File) => {
     setIsLoading(true);
@@ -104,16 +131,50 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
     }
   };
 
-
   return (
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-      <ArtworkUploader onImageUpload={handleImageUpload} isLoading={isLoading} imageUrl={imageDataUri} />
-      <GeneratedContent 
-        content={generatedContent} 
-        isLoading={isLoading} 
-        error={error}
-        onRegenerate={handleRegenerate}
-      />
-    </div>
+    <>
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex flex-col gap-8">
+            <ArtworkUploader onImageUpload={handleImageUpload} isLoading={isLoading} imageUrl={imageDataUri} />
+            <Card className="shadow-lg">
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Choose Caption Style</CardTitle>
+                    <CardDescription>Select a style for your AI-generated caption.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <RadioGroup value={captionStyle} onValueChange={setCaptionStyle} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {captionStyles.map((style) => (
+                            <div key={style} className="flex items-center space-x-2">
+                                <RadioGroupItem value={style} id={style} />
+                                <Label htmlFor={style} className="text-base font-body">{style}</Label>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                </CardContent>
+            </Card>
+            <IdeaGenerator />
+        </div>
+        <GeneratedContent 
+          content={generatedContent} 
+          isLoading={isLoading} 
+          error={error}
+          onRegenerate={handleRegenerate}
+        />
+      </div>
+
+      <AlertDialog open={showCollabPopup} onOpenChange={setShowCollabPopup}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-headline text-2xl">🤝 Invite @YourHandle as a Collaborator</AlertDialogTitle>
+            <AlertDialogDescription className="text-lg">
+              ✨ Collab for free! Boost your reach by tagging @YourHandle as a collaborator on your next post. Let’s grow together 💫
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowCollabPopup(false)}>Got it!</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

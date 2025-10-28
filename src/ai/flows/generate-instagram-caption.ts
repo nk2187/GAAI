@@ -11,6 +11,13 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const captionStyles = [
+    "Short & Aesthetic ✨",
+    "Funny & Engaging 😄",
+    "Emotional or Deep 🎭",
+    "Viral Reels Style 🎥"
+];
+
 const GenerateInstagramCaptionInputSchema = z.object({
   photoDataUri: z
     .string()
@@ -21,16 +28,12 @@ const GenerateInstagramCaptionInputSchema = z.object({
   artworkTheme: z.string().optional().describe('The theme of the artwork (e.g., nature, city, people).'),
   artworkMood: z.string().optional().describe('The mood of the artwork (e.g., happy, sad, peaceful).'),
   artworkColor: z.string().optional().describe('The dominant color of the artwork.'),
+  captionStyle: z.string().describe(`The desired style for the caption. One of: ${captionStyles.join(', ')}`),
 });
 export type GenerateInstagramCaptionInput = z.infer<typeof GenerateInstagramCaptionInputSchema>;
 
 const GenerateInstagramCaptionOutputSchema = z.object({
-  caption: z.object({
-    funny: z.string().describe('A funny and witty caption for the artwork.'),
-    poetic: z.string().describe('A poetic and expressive caption for the artwork.'),
-    deep: z.string().describe('A deep and thought-provoking caption for the artwork.'),
-    minimalist: z.string().describe('A minimalist and concise caption for the artwork.'),
-  }).describe('A collection of catchy and engaging Instagram captions for the artwork in different styles.'),
+  caption: z.string().describe('A catchy and engaging Instagram caption for the artwork in the specified style.'),
   hashtags: z.string().describe('A string of up to 30 trending and viral hashtags related to the artwork theme, separated by spaces.'),
   bestTimeToPost: z.string().describe('The best time to post the artwork on Instagram in Indian Standard Time (IST).'),
   aiTip: z.array(z.string()).describe('An array of AI tips in bullet points for better reach on Instagram, related to the artwork.'),
@@ -54,7 +57,7 @@ const prompt = ai.definePrompt({
   Color: {{artworkColor}}
   Photo: {{media url=photoDataUri}}
 
-  Generate a set of short, catchy, and emotional Instagram captions with relevant emojis, optimized for engagement, virality, and follower growth. The set must include variations: one funny, one poetic, one deep, and one minimalist caption.
+  Generate a short, catchy, and emotional Instagram caption with relevant emojis in the "{{captionStyle}}" style, optimized for engagement, virality, and follower growth.
 
   Also, generate a single string of up to 30 trending and viral hashtags related to the artwork's theme, separated by spaces, and optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
 

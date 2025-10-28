@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from "@/hooks/use-toast";
 import type { GenerateInstagramCaptionOutput } from '@/ai/flows/generate-instagram-caption';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 
@@ -79,22 +78,11 @@ export default function GeneratedContent({ content, isLoading, error, onRegenera
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
             <div>
-                <h3 className="text-lg font-semibold font-headline mb-2">AI Captions</h3>
-                <Tabs defaultValue="poetic" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 bg-muted/60">
-                        <TabsTrigger value="poetic">Poetic</TabsTrigger>
-                        <TabsTrigger value="funny">Funny</TabsTrigger>
-                        <TabsTrigger value="deep">Deep</TabsTrigger>
-                        <TabsTrigger value="minimalist">Minimalist</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="poetic"><Textarea value={content.caption.poetic} readOnly className="h-28 text-base bg-white" /></TabsContent>
-                    <TabsContent value="funny"><Textarea value={content.caption.funny} readOnly className="h-28 text-base bg-white" /></TabsContent>
-                    <TabsContent value="deep"><Textarea value={content.caption.deep} readOnly className="h-28 text-base bg-white" /></TabsContent>
-                    <TabsContent value="minimalist"><Textarea value={content.caption.minimalist} readOnly className="h-28 text-base bg-white" /></TabsContent>
-                </Tabs>
-                <Button onClick={() => handleCopy(Object.values(content.caption).join('\n\n'), 'caption')} variant="outline" size="sm" className="w-full mt-2">
+                <h3 className="text-lg font-semibold font-headline mb-2">AI Caption</h3>
+                <Textarea value={content.caption} readOnly className="h-28 text-base bg-white" />
+                <Button onClick={() => handleCopy(content.caption, 'caption')} variant="outline" size="sm" className="w-full mt-2">
                     {copied === 'caption' ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
-                    {copied === 'caption' ? 'Captions Copied!' : 'Copy All Captions'}
+                    {copied === 'caption' ? 'Caption Copied!' : 'Copy Caption'}
                 </Button>
             </div>
             <div>

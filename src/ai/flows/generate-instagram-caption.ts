@@ -25,10 +25,15 @@ const GenerateInstagramCaptionInputSchema = z.object({
 export type GenerateInstagramCaptionInput = z.infer<typeof GenerateInstagramCaptionInputSchema>;
 
 const GenerateInstagramCaptionOutputSchema = z.object({
-  caption: z.string().describe('A catchy and engaging Instagram caption for the artwork.'),
-  hashtags: z.string().describe('Trending hashtags related to the artwork theme.'),
+  caption: z.object({
+    funny: z.string().describe('A funny and witty caption for the artwork.'),
+    poetic: z.string().describe('A poetic and expressive caption for the artwork.'),
+    deep: z.string().describe('A deep and thought-provoking caption for the artwork.'),
+    minimalist: z.string().describe('A minimalist and concise caption for the artwork.'),
+  }).describe('A collection of catchy and engaging Instagram captions for the artwork in different styles.'),
+  hashtags: z.string().describe('A string of up to 30 trending and viral hashtags related to the artwork theme, separated by spaces.'),
   bestTimeToPost: z.string().describe('The best time to post the artwork on Instagram in Indian Standard Time (IST).'),
-  aiTip: z.string().describe('An AI tip for better reach on Instagram.'),
+  aiTip: z.array(z.string()).describe('An array of AI tips in bullet points for better reach on Instagram, related to the artwork.'),
 });
 export type GenerateInstagramCaptionOutput = z.infer<typeof GenerateInstagramCaptionOutputSchema>;
 
@@ -49,17 +54,11 @@ const prompt = ai.definePrompt({
   Color: {{artworkColor}}
   Photo: {{media url=photoDataUri}}
 
-  Generate a short, catchy, and emotional Instagram caption with relevant emojis optimized for engagement, virality, and follower growth. Include variations like funny, poetic, deep, or minimalist captions.
+  Generate a set of short, catchy, and emotional Instagram captions with relevant emojis, optimized for engagement, virality, and follower growth. The set must include variations: one funny, one poetic, one deep, and one minimalist caption.
 
-  Also, generate trending hashtags related to the artwork's theme optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
+  Also, generate a single string of up to 30 trending and viral hashtags related to the artwork's theme, separated by spaces, and optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
 
-  In addition, provide the best time to post in Indian Standard Time (IST) and an AI tip for better reach (e.g., "Use fewer hashtags today" or "Evening posts get 30% more engagement").
-
-  Here's how the output should be formatted:
-  Caption: [Generated caption]
-  Hashtags: [Generated hashtags]
-  Best time to post: [Best time to post]
-  AI tip: [AI tip for better reach]`,
+  In addition, provide the best time to post in Indian Standard Time (IST) and a list of actionable AI tips (as an array of strings) for better reach related to the specific artwork (e.g., "Ask a question in your caption to encourage comments", "Create a Reel showing the process of this artwork", "Collaborate with another artist who has a similar style").`,
 });
 
 const generateInstagramCaptionFlow = ai.defineFlow(

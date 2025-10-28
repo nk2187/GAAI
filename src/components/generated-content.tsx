@@ -1,19 +1,22 @@
 'use client';
 
-import { Copy, Check, Info, Clock, Hash, Lightbulb } from 'lucide-react';
+import { Copy, Check, Info, Clock, Hash, Lightbulb, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from "@/hooks/use-toast";
 import type { GenerateInstagramCaptionOutput } from '@/ai/flows/generate-instagram-caption';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+
 
 type GeneratedContentProps = {
   content: GenerateInstagramCaptionOutput | null;
   isLoading: boolean;
   error: string | null;
+  onRegenerate: () => void;
 };
 
 const ContentSkeleton = () => (
@@ -34,20 +37,20 @@ const ContentSkeleton = () => (
     </div>
 );
 
-export default function GeneratedContent({ content, isLoading, error }: GeneratedContentProps) {
-  const [isCopied, setIsCopied] = useState(false);
+type CopyState = 'caption' | 'hashtags' | null;
+
+export default function GeneratedContent({ content, isLoading, error, onRegenerate }: GeneratedContentProps) {
+  const [copied, setCopied] = useState<CopyState>(null);
   const { toast } = useToast();
 
-  const handleCopy = () => {
-    if (!content) return;
-    const textToCopy = `${content.caption}\n\n${content.hashtags}`;
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      setIsCopied(true);
+  const handleCopy = (text: string, type: CopyState) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(type);
       toast({
-        title: "Copied to clipboard!",
-        description: "Caption and hashtags are ready to paste.",
+        title: `Copied to clipboard!`,
+        description: `${type?.charAt(0).toUpperCase() + type!.slice(1)} are ready to paste.`,
       })
-      setTimeout(() => setIsCopied(false), 2000);
+      setTimeout(() => setCopied(null), 2000);
     });
   };
 
@@ -76,12 +79,31 @@ export default function GeneratedContent({ content, isLoading, error }: Generate
     return (
         <div className="space-y-6 animate-in fade-in-50 duration-500">
             <div>
-                <h3 className="text-lg font-semibold font-headline mb-2">AI Caption</h3>
-                <Textarea value={content.caption} readOnly className="h-32 text-base bg-white" />
+                <h3 className="text-lg font-semibold font-headline mb-2">AI Captions</h3>
+                <Tabs defaultValue="poetic" className="w-full">
+                    <TabsList className="grid w-full grid-cols-4 bg-muted/60">
+                        <TabsTrigger value="poetic">Poetic</TabsTrigger>
+                        <TabsTrigger value="funny">Funny</TabsTrigger>
+                        <TabsTrigger value="deep">Deep</TabsTrigger>
+                        <TabsTrigger value="minimalist">Minimalist</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="poetic"><Textarea value={content.caption.poetic} readOnly className="h-28 text-base bg-white" /></TabsContent>
+                    <TabsContent value="funny"><Textarea value={content.caption.funny} readOnly className="h-28 text-base bg-white" /></TabsContent>
+                    <TabsContent value="deep"><Textarea value={content.caption.deep} readOnly className="h-28 text-base bg-white" /></TabsContent>
+                    <TabsContent value="minimalist"><Textarea value={content.caption.minimalist} readOnly className="h-28 text-base bg-white" /></TabsContent>
+                </Tabs>
+                <Button onClick={() => handleCopy(Object.values(content.caption).join('\n\n'), 'caption')} variant="outline" size="sm" className="w-full mt-2">
+                    {copied === 'caption' ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                    {copied === 'caption' ? 'Captions Copied!' : 'Copy All Captions'}
+                </Button>
             </div>
             <div>
                 <h3 className="text-lg font-semibold font-headline mb-2 flex items-center gap-2"><Hash className="h-5 w-5"/> Trending Hashtags</h3>
                 <Textarea value={content.hashtags} readOnly className="h-20 text-base bg-white" />
+                 <Button onClick={() => handleCopy(content.hashtags, 'hashtags')} variant="outline" size="sm" className="w-full mt-2">
+                    {copied === 'hashtags' ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                    {copied === 'hashtags' ? 'Hashtags Copied!' : 'Copy Hashtags'}
+                </Button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Card className="bg-primary/10 border-primary/20">
@@ -94,18 +116,19 @@ export default function GeneratedContent({ content, isLoading, error }: Generate
                     </CardContent>
                 </Card>
                 <Card className="bg-primary/10 border-primary/20">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">AI Growth Tip</CardTitle>
-                        <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                    <CardHeader>
+                        <CardTitle className="text-sm font-medium flex items-center"><Lightbulb className="h-4 w-4 mr-2 text-muted-foreground" /> AI Growth Tips</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm text-muted-foreground">{content.aiTip}</p>
+                        <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                            {content.aiTip.map((tip, i) => <li key={i}>{tip}</li>)}
+                        </ul>
                     </CardContent>
                 </Card>
             </div>
-            <Button onClick={handleCopy} className="w-full text-lg py-6 bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white hover:shadow-lg hover:shadow-[#FF6B6B]/40 transition-all">
-                {isCopied ? <Check className="mr-2 h-5 w-5" /> : <Copy className="mr-2 h-5 w-5" />}
-                {isCopied ? 'Copied!' : 'Copy Caption & Hashtags'}
+            <Button onClick={onRegenerate} className="w-full text-lg py-6 bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white hover:shadow-lg hover:shadow-[#FF6B6B]/40 transition-all">
+                <RefreshCw className="mr-2 h-5 w-5" />
+                Regenerate
             </Button>
         </div>
     );

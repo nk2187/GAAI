@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import Image from 'next/image';
-import { Trash2, Copy, Calendar as CalendarIcon, X } from 'lucide-react';
+import { Trash2, Copy, Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -77,7 +77,8 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   }
   
   const copyToClipboard = (item: GenerationResult) => {
-    const textToCopy = `${item.caption}\n\n${item.hashtags}`;
+    const captionText = typeof item.caption === 'string' ? item.caption : Object.values(item.caption).join('\n\n');
+    const textToCopy = `${captionText}\n\n${item.hashtags}`;
     navigator.clipboard.writeText(textToCopy).then(() => {
       toast({
         title: "Copied to clipboard!",
@@ -237,7 +238,7 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
                 <Image src={item.imageUrl} alt="Artwork" width={100} height={100} className="rounded-md object-cover aspect-square" data-ai-hint="artwork history" />
                 <div className="flex-grow">
                   <p className="text-sm text-muted-foreground">{format(item.timestamp, 'PPP p')}</p>
-                  <p className="font-semibold line-clamp-2 mt-1">{item.caption}</p>
+                  <p className="font-semibold line-clamp-2 mt-1">{typeof item.caption === 'string' ? item.caption : item.caption.poetic}</p>
                   <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{item.hashtags}</p>
                 </div>
                 <div className="flex flex-col gap-2">

@@ -1,1 +1,6 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/generate-instagram-caption.ts';
+import '@/ai/flows/get-ai-insights.ts';
+import '@/ai/flows/analyze-artwork-theme.ts';

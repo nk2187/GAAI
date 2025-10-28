@@ -1,0 +1,75 @@
+'use server';
+
+/**
+ * @fileOverview An AI agent for generating Instagram captions and hashtags for artwork.
+ *
+ * - generateInstagramCaption - A function that handles the generation of Instagram captions and hashtags.
+ * - GenerateInstagramCaptionInput - The input type for the generateInstagramCaption function.
+ * - GenerateInstagramCaptionOutput - The return type for the generateInstagramCaption function.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const GenerateInstagramCaptionInputSchema = z.object({
+  photoDataUri: z
+    .string()
+    .describe(
+      "A photo of the artwork, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
+  artworkStyle: z.string().optional().describe('The style of the artwork (e.g., abstract, landscape, portrait, digital art).'),
+  artworkTheme: z.string().optional().describe('The theme of the artwork (e.g., nature, city, people).'),
+  artworkMood: z.string().optional().describe('The mood of the artwork (e.g., happy, sad, peaceful).'),
+  artworkColor: z.string().optional().describe('The dominant color of the artwork.'),
+});
+export type GenerateInstagramCaptionInput = z.infer<typeof GenerateInstagramCaptionInputSchema>;
+
+const GenerateInstagramCaptionOutputSchema = z.object({
+  caption: z.string().describe('A catchy and engaging Instagram caption for the artwork.'),
+  hashtags: z.string().describe('Trending hashtags related to the artwork theme.'),
+  bestTimeToPost: z.string().describe('The best time to post the artwork on Instagram.'),
+  aiTip: z.string().describe('An AI tip for better reach on Instagram.'),
+});
+export type GenerateInstagramCaptionOutput = z.infer<typeof GenerateInstagramCaptionOutputSchema>;
+
+export async function generateInstagramCaption(input: GenerateInstagramCaptionInput): Promise<GenerateInstagramCaptionOutput> {
+  return generateInstagramCaptionFlow(input);
+}
+
+const prompt = ai.definePrompt({
+  name: 'generateInstagramCaptionPrompt',
+  input: {schema: GenerateInstagramCaptionInputSchema},
+  output: {schema: GenerateInstagramCaptionOutputSchema},
+  prompt: `You are an AI assistant specializing in creating engaging Instagram captions and trending hashtags for artists.
+
+  Analyze the artwork based on the following information:
+  Style: {{artworkStyle}}
+  Theme: {{artworkTheme}}
+  Mood: {{artworkMood}}
+  Color: {{artworkColor}}
+  Photo: {{media url=photoDataUri}}
+
+  Generate a short, catchy, and emotional Instagram caption with relevant emojis optimized for engagement, virality, and follower growth. Include variations like funny, poetic, deep, or minimalist captions.
+
+  Also, generate trending hashtags related to the artwork's theme optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
+
+  In addition, provide the best time to post and an AI tip for better reach (e.g., "Use fewer hashtags today" or "Evening posts get 30% more engagement").
+
+  Here's how the output should be formatted:
+  Caption: [Generated caption]
+  Hashtags: [Generated hashtags]
+  Best time to post: [Best time to post]
+  AI tip: [AI tip for better reach]`,
+});
+
+const generateInstagramCaptionFlow = ai.defineFlow(
+  {
+    name: 'generateInstagramCaptionFlow',
+    inputSchema: GenerateInstagramCaptionInputSchema,
+    outputSchema: GenerateInstagramCaptionOutputSchema,
+  },
+  async input => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);

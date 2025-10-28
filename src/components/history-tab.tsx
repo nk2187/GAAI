@@ -3,10 +3,17 @@
 import { useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import Image from 'next/image';
-import { Trash2, Copy, Filter, Calendar, Palette, PenSquare } from 'lucide-react';
+import { Trash2, Copy, Filter, Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast";
 import type { GenerationResult } from '@/app/page';
+import { cn } from '@/lib/utils';
 
 const HISTORY_STORAGE_KEY = 'growart-ai-history';
 
@@ -29,6 +37,7 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
   const [filter, setFilter] = useState<string>('all');
+  const [date, setDate] = useState<DateRange | undefined>(undefined);
   
   useEffect(() => {
     setIsClient(true);
@@ -57,6 +66,8 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
 
   const clearHistory = () => {
     setHistory([]);
+    setDate(undefined);
+    setFilter('all');
     toast({ title: 'History cleared' });
   };
   
@@ -77,8 +88,22 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const artworkStyles = Array.from(new Set(history.map(item => item.artworkStyle).filter(Boolean)));
 
   const filteredHistory = history.filter(item => {
-    if (filter === 'all') return true;
-    return item.artworkStyle === filter;
+    const styleMatch = filter === 'all' || item.artworkStyle === filter;
+    
+    if (!date) return styleMatch;
+
+    const itemDate = new Date(item.timestamp);
+    const fromDate = date.from ? new Date(date.from) : null;
+    const toDate = date.to ? new Date(date.to) : null;
+
+    if(fromDate) fromDate.setHours(0,0,0,0);
+    if(toDate) toDate.setHours(23,59,59,999);
+
+    const dateMatch = 
+        (!fromDate || itemDate >= fromDate) &&
+        (!toDate || itemDate <= toDate);
+        
+    return styleMatch && dateMatch;
   });
   
   if (!isClient) {
@@ -104,7 +129,43 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
           <CardTitle className="font-headline text-2xl">Search History</CardTitle>
           <CardDescription>Review your past generations.</CardDescription>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-[300px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date?.from ? (
+                    date.to ? (
+                      <>
+                        {format(date.from, "LLL dd, y")} -{" "}
+                        {format(date.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(date.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={date?.from}
+                  selected={date}
+                  onSelect={setDate}
+                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline"><Filter className="mr-2 h-4 w-4" /> Filter</Button>

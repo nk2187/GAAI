@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import Image from 'next/image';
-import { Trash2, Copy, Filter, Calendar as CalendarIcon } from 'lucide-react';
+import { Trash2, Copy, Calendar as CalendarIcon, X } from 'lucide-react';
 import { format } from 'date-fns';
-import { DateRange } from 'react-day-picker';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -15,16 +14,16 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast";
 import type { GenerationResult } from '@/app/page';
 import { cn } from '@/lib/utils';
+import { Label } from '@/components/ui/label';
 
 const HISTORY_STORAGE_KEY = 'growart-ai-history';
 
@@ -37,7 +36,8 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
   const [filter, setFilter] = useState<string>('all');
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
   
   useEffect(() => {
     setIsClient(true);
@@ -66,10 +66,15 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
 
   const clearHistory = () => {
     setHistory([]);
-    setDate(undefined);
-    setFilter('all');
+    clearFilters();
     toast({ title: 'History cleared' });
   };
+
+  const clearFilters = () => {
+    setFromDate(undefined);
+    setToDate(undefined);
+    setFilter('all');
+  }
   
   const copyToClipboard = (item: GenerationResult) => {
     const textToCopy = `${item.caption}\n\n${item.hashtags}`;
@@ -90,20 +95,23 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const filteredHistory = history.filter(item => {
     const styleMatch = filter === 'all' || item.artworkStyle === filter;
     
-    if (!date) return styleMatch;
-
     const itemDate = new Date(item.timestamp);
-    const fromDate = date.from ? new Date(date.from) : null;
-    const toDate = date.to ? new Date(date.to) : null;
-
-    if(fromDate) fromDate.setHours(0,0,0,0);
-    if(toDate) toDate.setHours(23,59,59,999);
-
-    const dateMatch = 
-        (!fromDate || itemDate >= fromDate) &&
-        (!toDate || itemDate <= toDate);
+    
+    let fromDateMatch = true;
+    if(fromDate) {
+        const from = new Date(fromDate);
+        from.setHours(0,0,0,0);
+        fromDateMatch = itemDate >= from;
+    }
+    
+    let toDateMatch = true;
+    if(toDate) {
+        const to = new Date(toDate);
+        to.setHours(23,59,59,999);
+        toDateMatch = itemDate <= to;
+    }
         
-    return styleMatch && dateMatch;
+    return styleMatch && fromDateMatch && toDateMatch;
   });
   
   if (!isClient) {
@@ -124,78 +132,89 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
 
   return (
     <Card className="mt-8 shadow-lg">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <CardHeader>
         <div>
           <CardTitle className="font-headline text-2xl">Search History</CardTitle>
-          <CardDescription>Review your past generations.</CardDescription>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="date"
-                  variant={"outline"}
-                  className={cn(
-                    "w-[300px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "LLL dd, y")} -{" "}
-                        {format(date.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(date.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate}
-                  numberOfMonths={1}
-                />
-              </PopoverContent>
-            </Popover>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline"><Filter className="mr-2 h-4 w-4" /> Filter</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Filter by Artwork Style</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                  checked={filter === 'all'}
-                  onSelect={() => setFilter('all')}
-                >
-                  All Styles
-                </DropdownMenuCheckboxItem>
-                {artworkStyles.map(style => (
-                    <DropdownMenuCheckboxItem
-                        key={style}
-                        checked={filter === style}
-                        onSelect={() => setFilter(style as string)}
-                    >
-                        {style}
-                    </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="destructive" onClick={clearHistory} disabled={history.length === 0}>
-                <Trash2 className="mr-2 h-4 w-4" /> Clear All
-            </Button>
+          <CardDescription>Refine your past generations by date range or style.</CardDescription>
         </div>
       </CardHeader>
       <CardContent>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 p-4 border rounded-lg bg-muted/30">
+          <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="from-date">From</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="from-date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal bg-background",
+                    !fromDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {fromDate ? format(fromDate, "dd/MM/yyyy") : <span>dd/mm/yyyy</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={fromDate}
+                  onSelect={setFromDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="to-date">To</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="to-date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal bg-background",
+                    !toDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {toDate ? format(toDate, "dd/MM/yyyy") : <span>dd/mm/yyyy</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={toDate}
+                  onSelect={setToDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="style-filter">Style</Label>
+            <Select value={filter} onValueChange={setFilter}>
+                <SelectTrigger id="style-filter" className="w-full bg-background">
+                    <SelectValue placeholder="All Styles" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All Styles</SelectItem>
+                    {artworkStyles.map(style => (
+                        <SelectItem key={style} value={style as string}>
+                            {style}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+          </div>
+          <div className="grid w-full items-end gap-1.5">
+            <Button variant="outline" onClick={clearFilters} className="w-full bg-background">
+                Clear Filters
+            </Button>
+          </div>
+        </div>
+
         {filteredHistory.length > 0 ? (
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
             {filteredHistory.map(item => (
@@ -223,6 +242,11 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
             <p className="text-sm">Generated content will appear here.</p>
           </div>
         )}
+        <div className="flex justify-end mt-4">
+            <Button variant="destructive" onClick={clearHistory} disabled={history.length === 0}>
+                <Trash2 className="mr-2 h-4 w-4" /> Clear All History
+            </Button>
+        </div>
       </CardContent>
     </Card>
   );

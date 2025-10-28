@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -28,6 +28,7 @@ type HistoryTabProps = {
 export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const { toast } = useToast();
   const [isClient, setIsClient] = useState(false);
+  const [filter, setFilter] = useState<string>('all');
   
   useEffect(() => {
     setIsClient(true);
@@ -72,6 +73,13 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
     setHistory(prev => prev.filter(item => item.id !== id));
     toast({ title: 'Item deleted from history' });
   }
+
+  const artworkStyles = Array.from(new Set(history.map(item => item.artworkStyle).filter(Boolean)));
+
+  const filteredHistory = history.filter(item => {
+    if (filter === 'all') return true;
+    return item.artworkStyle === filter;
+  });
   
   if (!isClient) {
     return (
@@ -102,11 +110,23 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
                 <Button variant="outline"><Filter className="mr-2 h-4 w-4" /> Filter</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                <DropdownMenuLabel>Filter by Artwork Style</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled><Calendar className="mr-2 h-4 w-4" /> Date (coming soon)</DropdownMenuItem>
-                <DropdownMenuItem disabled><PenSquare className="mr-2 h-4 w-4" /> Caption Type (coming soon)</DropdownMenuItem>
-                <DropdownMenuItem disabled><Palette className="mr-2 h-4 w-4" /> Artwork Style (coming soon)</DropdownMenuItem>
+                <DropdownMenuCheckboxItem
+                  checked={filter === 'all'}
+                  onSelect={() => setFilter('all')}
+                >
+                  All Styles
+                </DropdownMenuCheckboxItem>
+                {artworkStyles.map(style => (
+                    <DropdownMenuCheckboxItem
+                        key={style}
+                        checked={filter === style}
+                        onSelect={() => setFilter(style as string)}
+                    >
+                        {style}
+                    </DropdownMenuCheckboxItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="destructive" onClick={clearHistory} disabled={history.length === 0}>
@@ -115,9 +135,9 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
         </div>
       </CardHeader>
       <CardContent>
-        {history.length > 0 ? (
+        {filteredHistory.length > 0 ? (
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-            {history.map(item => (
+            {filteredHistory.map(item => (
               <div key={item.id} className="flex gap-4 p-4 border rounded-lg items-start hover:bg-muted/50 transition-colors">
                 <Image src={item.imageUrl} alt="Artwork" width={100} height={100} className="rounded-md object-cover aspect-square" data-ai-hint="artwork history" />
                 <div className="flex-grow">
@@ -138,7 +158,7 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
           </div>
         ) : (
           <div className="text-center py-16 text-muted-foreground">
-            <p>Your search history is empty.</p>
+            <p>Your search history is empty or no results match the filter.</p>
             <p className="text-sm">Generated content will appear here.</p>
           </div>
         )}

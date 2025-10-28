@@ -21,7 +21,6 @@ export default function ContactUsPage() {
       <div className="text-center pt-4">
         <Button 
             onClick={handleInstagramClick}
-            className="text-lg font-bold py-6 px-8 text-white bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-[#FF6B6B]/40 hover:scale-105 rounded-xl"
             >
             <Instagram className="mr-2 h-5 w-5" />
             Message on Instagram

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -165,9 +166,9 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
       <AlertDialog open={showCollabPopup} onOpenChange={setShowCollabPopup}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-headline text-2xl">🤝 Invite @YourHandle as a Collaborator</AlertDialogTitle>
+            <AlertDialogTitle className="font-headline text-2xl">🤝 Invite @let_scollab as a Collaborator</AlertDialogTitle>
             <AlertDialogDescription className="text-lg">
-              ✨ Collab for free! Boost your reach by tagging @YourHandle as a collaborator on your next post. Let’s grow together 💫
+              ✨ Collab for free! Boost your reach by tagging @let_scollab as a collaborator on your next post. Let’s grow together 💫
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

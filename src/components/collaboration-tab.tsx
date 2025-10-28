@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,7 @@ import Image from 'next/image';
 
 export default function CollaborationTab() {
   const handleCollabClick = () => {
-    window.open('https://www.instagram.com/let_scollab?igsh=Z2hqbTh6cmd0aWJi', '_blank', 'noopener,noreferrer');
+    window.open('https://www.instagram.com/let_scollab', '_blank', 'noopener,noreferrer');
   };
 
   return (

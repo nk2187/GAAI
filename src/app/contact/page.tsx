@@ -7,7 +7,7 @@ import { Instagram } from 'lucide-react';
 
 export default function ContactUsPage() {
   const handleInstagramClick = () => {
-    window.open('https://www.instagram.com/let_scollab?igsh=Z2hqbTh6cmd0aWJi', '_blank', 'noopener,noreferrer');
+    window.open('https://www.instagram.com/let_scollab', '_blank', 'noopener,noreferrer');
   };
 
   return (

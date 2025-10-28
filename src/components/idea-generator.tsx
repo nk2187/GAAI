@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -52,7 +53,7 @@ export default function IdeaGenerator() {
     return (
         <Card className="shadow-lg">
             <CardHeader>
-                <CardTitle className="font-headline text-2xl flex items-center gap-2"><Lightbulb /> AI Idea Generator</CardTitle>
+                <CardTitle className="font-headline text-2xl flex items-center gap-2"><Lightbulb /> New Art Idea Generator</CardTitle>
                 <CardDescription>Overcome creative block with fresh ideas from AI.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

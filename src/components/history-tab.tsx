@@ -90,7 +90,16 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
     toast({ title: 'Item deleted from history' });
   }
 
-  const artworkStyles = Array.from(new Set(history.map(item => item.artworkStyle).filter(Boolean)));
+  const predefinedStyles = [
+    'Abstract',
+    'Landscape',
+    'Portrait',
+    'Digital Art',
+    'Surrealism',
+    'Minimalism'
+  ];
+
+  const artworkStyles = Array.from(new Set([...predefinedStyles, ...history.map(item => item.artworkStyle).filter(Boolean)]));
 
   const filteredHistory = history.filter(item => {
     const styleMatch = filter === 'all' || item.artworkStyle === filter;
@@ -215,7 +224,7 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
             </Select>
           </div>
           <div className="grid w-full items-end gap-1.5">
-            <Button variant="outline" onClick={clearFilters} className="w-full">
+            <Button variant="outline" onClick={clearFilters} className="w-full bg-background">
                 Clear Filters
             </Button>
           </div>

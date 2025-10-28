@@ -38,9 +38,8 @@ export default function Home() {
             <History className="mr-2 h-4 w-4" />
             History
           </TabsTrigger>
-          <TabsTrigger value="collab">
-            <Instagram className="mr-2 h-4 w-4" />
-            Collaborate
+          <TabsTrigger value="collab" className="flex items-center gap-1">
+            Free Collaboration on <Instagram className="h-4 w-4" />
           </TabsTrigger>
         </TabsList>
         <TabsContent value="generator">

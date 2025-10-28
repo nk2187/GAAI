@@ -27,8 +27,14 @@ type HistoryTabProps = {
 
 export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const { toast } = useToast();
+  const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
     try {
       const storedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
       if (storedHistory) {
@@ -37,18 +43,16 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
     } catch (error) {
       console.error("Failed to load history from localStorage", error);
     }
-  }, [setHistory]);
+  }, [isClient, setHistory]);
 
   useEffect(() => {
-    // Only run on client
-    if (typeof window !== 'undefined') {
-        try {
-            localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
-        } catch (error) {
-            console.error("Failed to save history to localStorage", error);
-        }
+    if (!isClient) return;
+    try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+    } catch (error) {
+        console.error("Failed to save history to localStorage", error);
     }
-  }, [history]);
+  }, [history, isClient]);
 
   const clearHistory = () => {
     setHistory([]);
@@ -67,6 +71,22 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
   const deleteItem = (id: string) => {
     setHistory(prev => prev.filter(item => item.id !== id));
     toast({ title: 'Item deleted from history' });
+  }
+  
+  if (!isClient) {
+    return (
+        <Card className="mt-8 shadow-lg">
+            <CardHeader>
+                <CardTitle className="font-headline text-2xl">Search History</CardTitle>
+                <CardDescription>Review your past generations.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="text-center py-16 text-muted-foreground">
+                    <p>Loading history...</p>
+                </div>
+            </CardContent>
+        </Card>
+    );
   }
 
   return (

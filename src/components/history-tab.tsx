@@ -162,6 +162,9 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
                   selected={fromDate}
                   onSelect={setFromDate}
                   initialFocus
+                  captionLayout="dropdown-buttons"
+                  fromYear={new Date().getFullYear() - 10}
+                  toYear={new Date().getFullYear()}
                 />
               </PopoverContent>
             </Popover>
@@ -188,6 +191,9 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
                   selected={toDate}
                   onSelect={setToDate}
                   initialFocus
+                  captionLayout="dropdown-buttons"
+                  fromYear={new Date().getFullYear() - 10}
+                  toYear={new Date().getFullYear()}
                 />
               </PopoverContent>
             </Popover>
@@ -195,7 +201,7 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
           <div className="grid w-full items-center gap-1.5">
             <Label htmlFor="style-filter">Style</Label>
             <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger id="style-filter" className="w-full bg-background">
+                <SelectTrigger id="style-filter" className="w-full bg-background font-normal">
                     <SelectValue placeholder="All Styles" />
                 </SelectTrigger>
                 <SelectContent>

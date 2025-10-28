@@ -58,6 +58,7 @@ const prompt = ai.definePrompt({
   Photo: {{media url=photoDataUri}}
 
   Generate a short, catchy, and emotional Instagram caption with relevant emojis in the "{{captionStyle}}" style, optimized for engagement, virality, and follower growth.
+  Naturally include a short call-to-action like "Follow for more art 🎨✨" or "Tag a friend who loves art 💫" to boost engagement.
 
   Also, generate a single string of up to 30 trending and viral hashtags related to the artwork's theme, separated by spaces, and optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
 

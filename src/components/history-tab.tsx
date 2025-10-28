@@ -215,7 +215,7 @@ export default function HistoryTab({ history, setHistory }: HistoryTabProps) {
             </Select>
           </div>
           <div className="grid w-full items-end gap-1.5">
-            <Button variant="outline" onClick={clearFilters} className="w-full bg-background">
+            <Button variant="outline" onClick={clearFilters} className="w-full">
                 Clear Filters
             </Button>
           </div>

@@ -27,7 +27,7 @@ export type GenerateInstagramCaptionInput = z.infer<typeof GenerateInstagramCapt
 const GenerateInstagramCaptionOutputSchema = z.object({
   caption: z.string().describe('A catchy and engaging Instagram caption for the artwork.'),
   hashtags: z.string().describe('Trending hashtags related to the artwork theme.'),
-  bestTimeToPost: z.string().describe('The best time to post the artwork on Instagram.'),
+  bestTimeToPost: z.string().describe('The best time to post the artwork on Instagram in Indian Standard Time (IST).'),
   aiTip: z.string().describe('An AI tip for better reach on Instagram.'),
 });
 export type GenerateInstagramCaptionOutput = z.infer<typeof GenerateInstagramCaptionOutputSchema>;
@@ -53,7 +53,7 @@ const prompt = ai.definePrompt({
 
   Also, generate trending hashtags related to the artwork's theme optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
 
-  In addition, provide the best time to post and an AI tip for better reach (e.g., "Use fewer hashtags today" or "Evening posts get 30% more engagement").
+  In addition, provide the best time to post in Indian Standard Time (IST) and an AI tip for better reach (e.g., "Use fewer hashtags today" or "Evening posts get 30% more engagement").
 
   Here's how the output should be formatted:
   Caption: [Generated caption]

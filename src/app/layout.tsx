@@ -21,6 +21,19 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap" rel="stylesheet" />
+
+        {/* ✅ Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GLCNS9ZBBG"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-GLCNS9ZBBG');
+            `,
+          }}
+        />
       </head>
       <body className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col">
         <Header />

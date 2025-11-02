@@ -31,6 +31,22 @@ export default function Home() {
 
   return (
     <div className="container mx-auto py-8 px-4">
+      
+      {/* ✅ Google AdSense Ad Unit */}
+      <div className="my-4 flex justify-center">
+        <ins className="adsbygoogle"
+             style={{ display: "block" }}
+             data-ad-client="ca-pub-2287972324112408"
+             data-ad-slot="2016751291"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(adsbygoogle = window.adsbygoogle || []).push({});`,
+        }}
+      />
+
       <Tabs defaultValue="generator" className="w-full">
         <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto bg-muted/60">
           <TabsTrigger value="generator">
@@ -41,7 +57,7 @@ export default function Home() {
             <History className="mr-2 h-4 w-4" />
             History
           </TabsTrigger>
-           <TabsTrigger value="stats">
+          <TabsTrigger value="stats">
             <LineChart className="mr-2 h-4 w-4" />
             Art Stats
           </TabsTrigger>

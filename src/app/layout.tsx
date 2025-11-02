@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from "next/script"; // ✅ Add this import
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import Header from '@/components/layout/header';
@@ -33,6 +34,14 @@ export default function RootLayout({
               gtag('config', 'G-GLCNS9ZBBG');
             `,
           }}
+        />
+
+        {/* ✅ Google AdSense verification snippet */}
+        <Script
+          id="adsense-script"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2287972324112408"
+          crossOrigin="anonymous"
         />
       </head>
       <body className="font-body antialiased bg-background text-foreground min-h-screen flex flex-col">

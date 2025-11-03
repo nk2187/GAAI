@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { History, Sparkles, LineChart, Palette, Bot } from 'lucide-react';
+import { History, Sparkles, LineChart, Palette } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GeneratorTab from '@/components/generator-tab';
@@ -11,6 +11,7 @@ import type { GenerateInstagramCaptionOutput } from '@/ai/flows/generate-instagr
 import ArtTrendsTab from '@/components/art-trends-tab';
 import ArtStatsTab from '@/components/art-stats-tab';
 import AdSenseAd from '@/components/adsense-ad';
+import AboutSection from '@/components/about-section';
 
 export type GenerationResult = GenerateInstagramCaptionOutput & {
   id: string;
@@ -25,6 +26,11 @@ export type GenerationResult = GenerateInstagramCaptionOutput & {
 
 export default function Home() {
   const [history, setHistory] = useState<GenerationResult[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useState(() => {
+    setIsClient(true);
+  });
   
   const addToHistory = (result: GenerationResult) => {
     setHistory(prev => [result, ...prev]);
@@ -34,9 +40,9 @@ export default function Home() {
     <div className="container mx-auto py-8 px-4">
       
       {/* ✅ Google AdSense Ad Unit */}
-      <div className="my-4 flex justify-center">
+      {isClient && <div className="my-4 flex justify-center">
         <AdSenseAd adClient="ca-pub-2287972324112408" adSlot="2016751291" />
-      </div>
+      </div>}
 
       <Tabs defaultValue="generator" className="w-full">
         <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto bg-muted/60">
@@ -72,6 +78,7 @@ export default function Home() {
         </TabsContent>
       </Tabs>
 
+      <AboutSection />
       <CollaborationTab />
     </div>
   );

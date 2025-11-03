@@ -15,12 +15,14 @@ declare global {
 
 export default function AdSenseAd({ adClient, adSlot }: AdSenseAdProps) {
   useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error(err);
+    if (window.adsbygoogle) {
+        try {
+            window.adsbygoogle.push({});
+        } catch (err) {
+            console.error(err);
+        }
     }
-  }, []);
+  }, [adSlot]);
 
   return (
     <ins

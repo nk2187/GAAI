@@ -1,4 +1,3 @@
-
 'use client';
 
 import StaticPage from '@/components/layout/static-page';
@@ -13,10 +12,10 @@ export default function ContactUsPage() {
   return (
     <StaticPage title="Contact Us">
       <p>
-        We welcome feedback, ideas, and collaboration suggestions from artists and creators.
+        We love hearing from our community! Whether you have feedback, ideas for new features, or collaboration proposals, your input helps us grow and improve.
       </p>
       <p>
-        If you’d like to share your thoughts or have suggestions for improving our tools, feel free to send us a message on Instagram.
+        The best way to reach us is by sending a direct message on Instagram. We are active and responsive, and we look forward to connecting with you. Let us know how we can make GrowArt AI even better for artists like you.
       </p>
       <div className="text-center pt-4">
         <Button 
@@ -27,7 +26,7 @@ export default function ContactUsPage() {
         </Button>
       </div>
       <p className="pt-6">
-        GrowArt AI values every creator’s voice and aims to build a helpful and creative community.
+        GrowArt AI values every creator’s voice and aims to build a helpful, inspiring, and creative community together.
       </p>
     </StaticPage>
   );

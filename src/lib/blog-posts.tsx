@@ -1,3 +1,4 @@
+
 export type BlogPost = {
     slug: string;
     title: string;
@@ -61,5 +62,47 @@ export const blogPosts: BlogPost[] = [
                 <p className="font-bold text-center pt-4 text-xl">🚀 GrowArt AI empowers artists with automation, creativity, and growth — all for free. Start using it today and make your next post your biggest one yet!</p>
             </>
         )
+    },
+    {
+        slug: 'guide-to-instagram-reels-for-artists',
+        title: 'The Ultimate Guide to Instagram Reels for Artists',
+        emoji: '🎥',
+        description: 'Learn how to use Instagram Reels to showcase your art, connect with a wider audience, and grow your following.',
+        content: (
+            <>
+                <p>Instagram Reels are one of the most powerful tools for artists to gain visibility. Here’s a quick guide to creating Reels that captivate and grow your audience.</p>
+                <h3 className="font-headline text-2xl pt-4">1. Showcase Your Process</h3>
+                <p>A time-lapse of your artwork from start to finish is mesmerizing. It shows the effort behind your art and helps viewers appreciate it more. Don't forget to include a final shot of the finished piece!</p>
+                <h3 className="font-headline text-2xl pt-4">2. Use Trending Audio</h3>
+                <p>Using trending sounds can significantly boost your Reel's reach. Find a song or audio clip that matches the mood of your artwork and let the algorithm do the work.</p>
+                <h3 className="font-headline text-2xl pt-4">3. Create "Pack an Order With Me" Videos</h3>
+                <p>If you sell your art, this is a fantastic way to show your packaging, express gratitude to your customers, and give potential buyers a glimpse into the experience of buying from you.</p>
+                 <h3 className="font-headline text-2xl pt-4">4. Tell a Story</h3>
+                <p>Use text overlays and short clips to narrate the story behind your artwork. What inspired it? What does it mean to you? Storytelling creates an emotional connection that static images can't always match.</p>
+                <p className="font-bold text-center pt-4 text-xl">Reels offer a dynamic way to share your art. Pair them with a powerful caption from GrowArt AI to maximize your impact!</p>
+            </>
+        )
+    },
+    {
+        slug: 'finding-your-artistic-style',
+        title: 'Finding Your Artistic Style in the Digital Age',
+        emoji: '🧭',
+        description: 'In a world full of inspiration, how do you find a voice that is uniquely yours? Here are some tips to guide you.',
+        content: (
+            <>
+                <p>Developing a unique artistic style is a journey, not a destination. In a digital world overflowing with inspiration, it can be challenging to find your own voice. Here’s how to navigate it.</p>
+                <h3 className="font-headline text-2xl pt-4">1. Create, Create, Create</h3>
+                <p>The more you create, the more you'll discover what you enjoy. Don't be afraid to experiment with different mediums, subjects, and techniques. Your style will emerge from the work you consistently produce.</p>
+                <h3 className="font-headline text-2xl pt-4">2. Study, But Don't Copy</h3>
+                <p>Look at artists you admire. Analyze what you like about their work—is it their use of color, their composition, or their subject matter? Absorb these lessons, but always add your own twist.</p>
+                <h3 className="font-headline text-2xl pt-4">3. Embrace Your "Mistakes"</h3>
+                <p>Sometimes, the happy accidents are what lead to a breakthrough. An unexpected brushstroke or color combination could be the start of something that feels uniquely "you."</p>
+                <h3 className="font-headline text-2xl pt-4">4. Be Patient with Yourself</h3>
+                <p>Your style will evolve over time, just as you do. Don't rush the process. Trust your instincts, create what feels authentic to you, and your signature style will naturally follow.</p>
+                <p className="font-bold text-center pt-4 text-xl">Your artistic voice is already within you. The key is to create consistently and listen to it.</p>
+            </>
+        )
     }
 ];
+
+    

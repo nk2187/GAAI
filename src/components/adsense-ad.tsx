@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -15,19 +16,23 @@ declare global {
 
 export default function AdSenseAd({ adClient, adSlot }: AdSenseAdProps) {
   useEffect(() => {
-    if (window.adsbygoogle) {
-        try {
-            window.adsbygoogle.push({});
-        } catch (err) {
-            console.error(err);
+    const adTimer = setTimeout(() => {
+        if (window.adsbygoogle) {
+            try {
+                window.adsbygoogle.push({});
+            } catch (err) {
+                console.error("AdSense error:", err);
+            }
         }
-    }
+    }, 100);
+
+    return () => clearTimeout(adTimer);
   }, [adSlot]);
 
   return (
     <ins
       className="adsbygoogle"
-      style={{ display: 'block' }}
+      style={{ display: 'block', width: '100%' }}
       data-ad-client={adClient}
       data-ad-slot={adSlot}
       data-ad-format="auto"

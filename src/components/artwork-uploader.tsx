@@ -1,12 +1,13 @@
 
 'use client';
 
-import { useState, useRef, type ChangeEvent, type DragEvent } from 'react';
+import { useState, useRef, type ChangeEvent, type DragEvent, useEffect } from 'react';
 import Image from 'next/image';
 import { UploadCloud, FileImage, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 
 type ArtworkUploaderProps = {
   onImageUpload: (file: File) => void;
@@ -15,9 +16,52 @@ type ArtworkUploaderProps = {
   elapsedTime: number;
 };
 
+const loadingMessages = [
+    "🎨 Analyzing your artwork…",
+    "✨ Generating viral caption and hashtags…",
+    "💡 Finding the best time to post…",
+    "🤖 Compiling AI growth tips…",
+    "Almost there..."
+];
+
 export default function ArtworkUploader({ onImageUpload, isLoading, imageUrl, elapsedTime }: ArtworkUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let messageInterval: NodeJS.Timeout;
+    let progressInterval: NodeJS.Timeout;
+
+    if (isLoading) {
+        // Cycle through messages every 2.5 seconds
+        messageInterval = setInterval(() => {
+            setCurrentMessageIndex(prevIndex => (prevIndex + 1) % loadingMessages.length);
+        }, 2500);
+
+        // Simulate progress bar filling up over an estimated 10 seconds
+        const estimatedDuration = 10;
+        setProgress(0);
+        progressInterval = setInterval(() => {
+            setProgress(prev => {
+                const nextProgress = prev + 100 / (estimatedDuration * 4); // update 4 times a second
+                return Math.min(nextProgress, 95); // Don't let it reach 100% until done
+            });
+        }, 250);
+
+    } else {
+        setCurrentMessageIndex(0);
+        setProgress(0);
+    }
+
+    return () => {
+        clearInterval(messageInterval);
+        clearInterval(progressInterval);
+    };
+  }, [isLoading]);
+
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -61,11 +105,15 @@ export default function ArtworkUploader({ onImageUpload, isLoading, imageUrl, el
           className={`relative w-full aspect-square border-2 border-dashed rounded-lg flex flex-col justify-center items-center text-center p-4 transition-colors duration-200 ${isDragging ? 'border-primary bg-primary/10' : 'border-border'}`}
         >
           {isLoading && (
-            <div className="absolute inset-0 bg-background/80 flex flex-col justify-center items-center z-10 rounded-lg">
+            <div className="absolute inset-0 bg-background/90 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-lg p-8 gap-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="mt-4 text-lg text-muted-foreground">
-                  Analyzing your art... {elapsedTime > 0 && `${elapsedTime}s`}
+                <p className="mt-2 text-lg text-muted-foreground font-semibold text-center transition-opacity duration-500">
+                    {loadingMessages[currentMessageIndex]}
                 </p>
+                <div className="w-full">
+                    <Progress value={progress} className="w-full h-2" />
+                    <p className="text-sm text-muted-foreground mt-2 text-right">{elapsedTime > 0 && `${elapsedTime}s`}</p>
+                </div>
             </div>
           )}
 

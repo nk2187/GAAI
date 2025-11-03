@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { History, Sparkles, LineChart, Palette } from 'lucide-react';
+import { History, Sparkles, LineChart, Palette, Bot } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GeneratorTab from '@/components/generator-tab';
@@ -10,6 +10,7 @@ import CollaborationTab from '@/components/collaboration-tab';
 import type { GenerateInstagramCaptionOutput } from '@/ai/flows/generate-instagram-caption';
 import ArtTrendsTab from '@/components/art-trends-tab';
 import ArtStatsTab from '@/components/art-stats-tab';
+import AdSenseAd from '@/components/adsense-ad';
 
 export type GenerationResult = GenerateInstagramCaptionOutput & {
   id: string;
@@ -34,18 +35,8 @@ export default function Home() {
       
       {/* ✅ Google AdSense Ad Unit */}
       <div className="my-4 flex justify-center">
-        <ins className="adsbygoogle"
-             style={{ display: "block" }}
-             data-ad-client="ca-pub-2287972324112408"
-             data-ad-slot="2016751291"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+        <AdSenseAd adClient="ca-pub-2287972324112408" adSlot="2016751291" />
       </div>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `(adsbygoogle = window.adsbygoogle || []).push({});`,
-        }}
-      />
 
       <Tabs defaultValue="generator" className="w-full">
         <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto bg-muted/60">
@@ -57,31 +48,31 @@ export default function Home() {
             <History className="mr-2 h-4 w-4" />
             History
           </TabsTrigger>
-          <TabsTrigger value="stats">
-            <LineChart className="mr-2 h-4 w-4" />
-            Art Stats
-          </TabsTrigger>
           <TabsTrigger value="trends">
+            <LineChart className="mr-2 h-4 w-4" />
+            Trends
+          </TabsTrigger>
+          <TabsTrigger value="stats">
             <Palette className="mr-2 h-4 w-4" />
-            Art Trends
+            Stats
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="generator">
           <GeneratorTab onGenerated={addToHistory} />
         </TabsContent>
         <TabsContent value="history">
           <HistoryTab history={history} setHistory={setHistory} />
         </TabsContent>
-        <TabsContent value="stats">
-          <ArtStatsTab history={history} />
-        </TabsContent>
         <TabsContent value="trends">
-          <ArtTrendsTab />
+            <ArtTrendsTab />
         </TabsContent>
-        <TabsContent value="collab">
-          <CollaborationTab />
+        <TabsContent value="stats">
+            <ArtStatsTab history={history} />
         </TabsContent>
       </Tabs>
+
+      <CollaborationTab />
     </div>
   );
 }

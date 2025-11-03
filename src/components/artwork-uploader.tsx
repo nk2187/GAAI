@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from 'react';
@@ -11,9 +12,10 @@ type ArtworkUploaderProps = {
   onImageUpload: (file: File) => void;
   isLoading: boolean;
   imageUrl: string | null;
+  elapsedTime: number;
 };
 
-export default function ArtworkUploader({ onImageUpload, isLoading, imageUrl }: ArtworkUploaderProps) {
+export default function ArtworkUploader({ onImageUpload, isLoading, imageUrl, elapsedTime }: ArtworkUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,7 +63,9 @@ export default function ArtworkUploader({ onImageUpload, isLoading, imageUrl }: 
           {isLoading && (
             <div className="absolute inset-0 bg-background/80 flex flex-col justify-center items-center z-10 rounded-lg">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="mt-4 text-lg text-muted-foreground">Analyzing your art...</p>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Analyzing your art... {elapsedTime > 0 && `${elapsedTime}s`}
+                </p>
             </div>
           )}
 

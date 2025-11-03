@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { GenerationResult } from '@/app/page';
 import ArtworkUploader from './artwork-uploader';
 import GeneratedContent from './generated-content';
@@ -42,11 +42,37 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
   const { toast } = useToast();
   const [captionStyle, setCaptionStyle] = useState(captionStyles[0]);
   const [showCollabPopup, setShowCollabPopup] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setElapsedTime(0);
+  }, []);
+
+  const startTimer = useCallback(() => {
+    stopTimer(); // Ensure no multiple timers are running
+    setElapsedTime(0);
+    timerRef.current = setInterval(() => {
+      setElapsedTime(prevTime => prevTime + 1);
+    }, 1000);
+  }, [stopTimer]);
+
+  useEffect(() => {
+    return () => {
+      stopTimer(); // Cleanup timer on component unmount
+    };
+  }, [stopTimer]);
+
 
   const runGeneration = useCallback(async (dataUri: string) => {
     setIsLoading(true);
     setError(null);
     setShowCollabPopup(false);
+    startTimer();
 
     try {
       let analysis = analysisResult;
@@ -91,8 +117,9 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
       })
     } finally {
       setIsLoading(false);
+      stopTimer();
     }
-  }, [analysisResult, onGenerated, toast, captionStyle]);
+  }, [analysisResult, onGenerated, toast, captionStyle, startTimer, stopTimer]);
 
   const handleImageUpload = async (file: File) => {
     setIsLoading(true);
@@ -117,6 +144,7 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
         description: errorMessage,
       })
       setIsLoading(false);
+      stopTimer();
     };
   };
 
@@ -136,7 +164,12 @@ export default function GeneratorTab({ onGenerated }: GeneratorTabProps) {
     <>
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex flex-col gap-8">
-            <ArtworkUploader onImageUpload={handleImageUpload} isLoading={isLoading} imageUrl={imageDataUri} />
+            <ArtworkUploader 
+              onImageUpload={handleImageUpload} 
+              isLoading={isLoading} 
+              imageUrl={imageDataUri}
+              elapsedTime={elapsedTime}
+            />
             <Card className="shadow-lg">
                 <CardHeader>
                     <CardTitle className="font-headline text-2xl">Choose Caption Style</CardTitle>

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { blogPosts } from '@/lib/blog-posts';
+import { blogPosts } from '@/lib/blog-posts.tsx';
 import StaticPage from '@/components/layout/static-page';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

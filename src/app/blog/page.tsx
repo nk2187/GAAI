@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { blogPosts } from '@/lib/blog-posts';
+import { blogPosts } from '@/lib/blog-posts.tsx';
 
 export default function BlogPage() {
   return (

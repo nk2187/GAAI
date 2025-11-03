@@ -6,6 +6,8 @@ export default function Footer() {
     { name: 'FAQ', href: '/faq' },
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Contact Us', href: '/contact' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Terms & Conditions', href: '/terms' },
   ];
 
   return (
@@ -14,7 +16,7 @@ export default function Footer() {
         <p className="text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} GrowArt AI. All rights reserved.
         </p>
-        <nav className="flex gap-4 sm:gap-6">
+        <nav className="flex gap-4 sm:gap-6 flex-wrap justify-center">
           {links.map((link) => (
             <Link
               key={link.name}

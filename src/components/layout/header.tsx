@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Logo from './logo';
+import { Button } from '../ui/button';
 
 export default function Header() {
   return (
@@ -11,6 +12,11 @@ export default function Header() {
             GrowArt AI
           </h1>
         </Link>
+        <nav>
+          <Button asChild variant="ghost">
+            <Link href="/blog">Blog</Link>
+          </Button>
+        </nav>
       </div>
     </header>
   );

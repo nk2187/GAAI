@@ -62,7 +62,10 @@ const prompt = ai.definePrompt({
 
   Also, generate a single string of up to 30 trending and viral hashtags related to the artwork's theme, separated by spaces, and optimized for reach and discoverability. If live API access isn’t available, generate simulated trending hashtags based on current Instagram trends in art, painting, digital art, or creativity.
 
-  In addition, provide the best time to post in Indian Standard Time (IST) and a list of actionable AI tips (as an array of strings) for better reach related to the specific artwork (e.g., "Ask a question in your caption to encourage comments", "Create a Reel showing the process of this artwork", "Collaborate with another artist who has a similar style").`,
+  In addition, provide the best time to post in Indian Standard Time (IST) and a list of actionable AI tips (as an array of strings) for better reach related to the specific artwork (e.g., "Ask a question in your caption to encourage comments", "Create a Reel showing the process of this artwork", "Collaborate with another artist who has a similar style").
+  
+  IMPORTANT: You must always return a valid JSON object that conforms to the output schema. If you cannot determine a value for a field, return an empty string or an empty array, but do not omit the field.
+  `,
 });
 
 const generateInstagramCaptionFlow = ai.defineFlow(

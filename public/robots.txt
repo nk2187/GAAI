@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://growartai.vercel.app/sitemap.xml
+Sitemap: https://growartai.me/sitemap.xml
